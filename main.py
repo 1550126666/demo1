@@ -1,3 +1,5 @@
+import time
+
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,6 +13,11 @@ port_list = [port.device for port in ports]
 
 user_port = st.sidebar.selectbox("选择user串口", port_list)
 data_port = st.sidebar.selectbox("选择data串口", port_list)
+with st.spinner('Wait for it...'):
+    time.sleep(1)
+su = st.success('Done!')
+time.sleep(0.6)
+su.empty()
 st.title("基于毫米波雷达📡的姿态检测🙋‍♂️以及生命体征检测🫀")
 def init(azimuth_chart, elevation_chart, plot_chart, breathing_value, heartbeat_value):
     # 更新到达角多普勒热图数据和俯仰角多普勒热图数据
@@ -197,13 +204,20 @@ def update_data(azimuth_chart, elevation_chart, plot_chart, breathing_value, hea
 def main():
     col1, col2= st.columns(2)
     with col1:
+        st.header("到达角多普勒热图")
+        st.text("根据多普勒热图分析当前检测目标的到达角与距离之间的关系")
         azimuth_chart = st.empty()
     with col2:
+        st.header("俯仰角多普勒热图")
+        st.text("根据多普勒热图分析当前检测目标的俯仰角与距离之间的关系")
         elevation_chart = st.empty()
+    st.header("生命体征检测")
     col3,col4 =st.columns(2)
     with col3:
+        st.text("展示呼吸频率与心跳频率的折线图")
         plot_chart = st.empty()
     with col4:
+        st.text("展示呼吸频率与心跳频率数据变化")
         scol1, scol2 = st.columns(2)
         with scol1:
             breathing_value = st.empty()
