@@ -11,6 +11,7 @@ port_list = [port.device for port in ports]
 
 user_port = st.sidebar.selectbox("选择user串口", port_list)
 data_port = st.sidebar.selectbox("选择data串口", port_list)
+st.title("基于毫米波雷达📡的姿态检测🙋‍♂️以及生命体征检测🫀")
 def init(azimuth_chart, elevation_chart, plot_chart, breathing_value, heartbeat_value):
     # 更新到达角多普勒热图数据和俯仰角多普勒热图数据
     azimuth_data = np.zeros((100, 100))
@@ -194,20 +195,25 @@ def update_data(azimuth_chart, elevation_chart, plot_chart, breathing_value, hea
     heartbeat_value.metric("心跳频率", "{:.2f}".format(np.mean(heartbeat_data))+" bpm")
 
 def main():
-    col1, col2, col3 = st.columns(3)
+    col1, col2= st.columns(2)
     with col1:
         azimuth_chart = st.empty()
-        breathing_value = st.empty()
     with col2:
         elevation_chart = st.empty()
-        heartbeat_value = st.empty()
+    col3,col4 =st.columns(2)
     with col3:
         plot_chart = st.empty()
+    with col4:
+        scol1, scol2 = st.columns(2)
+        with scol1:
+            breathing_value = st.empty()
+        with scol2:
+            heartbeat_value = st.empty()
     init(azimuth_chart, elevation_chart, plot_chart, breathing_value, heartbeat_value)
 
-
-    start_button = st.button("开始")
-    stop_button = st.button("停止")
+    col4, col5 = st.sidebar.columns(2)
+    start_button = col4.button("开始")
+    stop_button = col5.button("停止")
 
     if start_button and not stop_button:
         while True:
@@ -216,6 +222,5 @@ def main():
 
             if stop_button:
                 break
-
 if __name__ == "__main__":
     main()
