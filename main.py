@@ -19,11 +19,14 @@ su = st.success('Done!')
 time.sleep(0.6)
 su.empty()
 st.title("基于毫米波雷达📡的姿态检测🙋‍♂️以及生命体征检测🫀")
-def init(azimuth_chart, elevation_chart, plot_chart, breathing_value, heartbeat_value):
+
+
+def init(azimuth_chart, elevation_chart, plot_chart, breathing_value, heartbeat_value,posture_result):
     # 更新到达角多普勒热图数据和俯仰角多普勒热图数据
     azimuth_data = np.zeros((100, 100))
     elevation_data = np.zeros((100, 100))
-
+    # 加载姿态预测结果
+    posture_data = Image.open("./data/1.png")
     # 更新呼吸频率和心跳频率数据
     breathing_data = np.zeros(100)
     heartbeat_data = np.zeros(100)
@@ -35,6 +38,9 @@ def init(azimuth_chart, elevation_chart, plot_chart, breathing_value, heartbeat_
     font_size = 12
     font_prop = fm.FontProperties(fname=font_path)
     title_font = {'fontproperties': font_prop, 'fontsize': 12, 'fontweight': 'bold'}
+
+    # 绘制姿态预测骨架图
+    posture_result.image(posture_data, caption='姿态预测',use_column_width = True)
     # 绘制到达角多普勒热图
     fig, ax = plt.subplots(figsize=(fig_width, fig_height), dpi=dpi)
     img = ax.imshow(azimuth_data, cmap='hot', interpolation='nearest')
@@ -110,10 +116,13 @@ def init(azimuth_chart, elevation_chart, plot_chart, breathing_value, heartbeat_
     heartbeat_value.metric("心跳频率", "{:.2f}".format(np.mean(heartbeat_data)) + " bpm")
 
 
-def update_data(azimuth_chart, elevation_chart, plot_chart, breathing_value, heartbeat_value):
+def update_data(azimuth_chart, elevation_chart, plot_chart, breathing_value, heartbeat_value, posture_result, num):
     # 更新到达角多普勒热图数据和俯仰角多普勒热图数据
     azimuth_data = np.random.rand(100, 100)
     elevation_data = np.random.rand(100, 100)
+
+    # 加载姿态预测结果
+    posture_data = Image.open("./data/{}.png".format(num))
 
     # 更新呼吸频率和心跳频率数据
     breathing_data = np.random.rand(100)
@@ -131,7 +140,7 @@ def update_data(azimuth_chart, elevation_chart, plot_chart, breathing_value, hea
     fig, ax = plt.subplots(figsize=(fig_width, fig_height), dpi=dpi)
     img = ax.imshow(azimuth_data, cmap='hot', interpolation='nearest')
     plt.colorbar(img, ax=ax)
-    ax.set_title("到达角多普勒热图",**title_font)
+    ax.set_title("到达角多普勒热图", **title_font)
 
     # 将图像保存到内存中
     azimuth_img_bytes = io.BytesIO()
@@ -150,11 +159,13 @@ def update_data(azimuth_chart, elevation_chart, plot_chart, breathing_value, hea
     # 显示到达角多普勒热图
     azimuth_chart.image(azimuth_img)
 
+    # 绘制姿态预测骨架图
+    posture_result.image(posture_data, caption='姿态预测', use_column_width=True)
     # 绘制俯仰角多普勒热图
     fig, ax = plt.subplots(figsize=(fig_width, fig_height), dpi=dpi)
     img = ax.imshow(elevation_data, cmap='hot', interpolation='nearest')
     plt.colorbar(img, ax=ax)
-    ax.set_title("俯仰角多普勒热图",**title_font)
+    ax.set_title("俯仰角多普勒热图", **title_font)
 
     # 将图像保存到内存中
     elevation_img_bytes = io.BytesIO()
@@ -174,10 +185,10 @@ def update_data(azimuth_chart, elevation_chart, plot_chart, breathing_value, hea
 
     # 绘制生命体征数据折线图
     fig, ax = plt.subplots(figsize=(fig_width, fig_height), dpi=dpi)
-    ax.plot(breathing_data, label="呼吸频率",)
+    ax.plot(breathing_data, label="呼吸频率", )
     ax.plot(heartbeat_data, label="心跳频率")
-    ax.legend(prop=font_prop,loc='upper right')
-    ax.set_title("生命体征数据折线图",**title_font)
+    ax.legend(prop=font_prop, loc='upper right')
+    ax.set_title("生命体征数据折线图", **title_font)
 
     # 将图像保存到内存中
     plot_img_bytes = io.BytesIO()
@@ -198,11 +209,33 @@ def update_data(azimuth_chart, elevation_chart, plot_chart, breathing_value, hea
     # 更新呼吸频率和心跳频率数值
     # breathing_value.write("呼吸频率: {:.2f}".format(np.mean(breathing_data)))
     # heartbeat_value.write("心跳频率: {:.2f}".format(np.mean(heartbeat_data)))
-    breathing_value.metric("呼吸频率", "{:.2f}".format(np.mean(breathing_data))+" bpm")
-    heartbeat_value.metric("心跳频率", "{:.2f}".format(np.mean(heartbeat_data))+" bpm")
+    breathing_value.metric("呼吸频率", "{:.2f}".format(np.mean(breathing_data)) + " bpm")
+    heartbeat_value.metric("心跳频率", "{:.2f}".format(np.mean(heartbeat_data)) + " bpm")
+def show_pose_knowledge():
+    st.markdown("## 错误坐姿的危害")
+    st.markdown("错误的坐姿可能导致以下问题：")
+    st.markdown("- 脊柱问题，如脊椎变形、疼痛等。")
+    st.markdown("- 颈椎问题，如颈椎痛、僵硬等。")
+    st.markdown("- 肌肉疲劳和紧张，导致不适和疼痛。")
+    st.markdown("- 姿势相关的呼吸问题。")
+
+    st.markdown("## 如何纠正坐姿")
+    st.markdown("以下是纠正坐姿的一些建议：")
+    st.markdown("- 保持正确的坐姿，背部挺直、肩部放松。")
+    st.markdown("- 使用支撑，如靠背和腰垫。")
+    st.markdown("- 定期休息和活动，避免长时间静坐。")
+    st.markdown("- 可以尝试一些坐姿矫正设备或者使用正确坐姿的应用程序。")
+
+    st.markdown("## 如何放松身体")
+    st.markdown("以下是放松身体的一些方法：")
+    st.markdown("- 进行伸展和放松运动，如颈部转动、肩部放松等。")
+    st.markdown("- 深呼吸和放松呼吸，帮助缓解压力和紧张感。")
+    st.markdown("- 均衡饮食和充足的睡眠，有助于身体的恢复和放松。")
+
+
 
 def main():
-    col1, col2= st.columns(2)
+    col1, col2 = st.columns(2)
     with col1:
         st.header("到达角多普勒热图")
         st.text("根据多普勒热图分析当前检测目标的到达角与距离之间的关系")
@@ -212,7 +245,7 @@ def main():
         st.text("根据多普勒热图分析当前检测目标的俯仰角与距离之间的关系")
         elevation_chart = st.empty()
     st.header("生命体征检测")
-    col3,col4 =st.columns(2)
+    col3, col4 = st.columns(2)
     with col3:
         st.text("展示呼吸频率与心跳频率的折线图")
         plot_chart = st.empty()
@@ -223,18 +256,28 @@ def main():
             breathing_value = st.empty()
         with scol2:
             heartbeat_value = st.empty()
-    init(azimuth_chart, elevation_chart, plot_chart, breathing_value, heartbeat_value)
+    st.header("姿态预测结果")
+    posture_result = st.empty()
+    init(azimuth_chart, elevation_chart, plot_chart, breathing_value, heartbeat_value, posture_result)
 
-    col4, col5 = st.sidebar.columns(2)
-    start_button = col4.button("开始")
-    stop_button = col5.button("停止")
-
+   # 在适当的地方调用该函数来展示普及知识区域
+    show_pose_knowledge()
+    col5, col6 = st.sidebar.columns(2)
+    start_button = col5.button("开始")
+    stop_button = col6.button("停止")
+    num = 1
     if start_button and not stop_button:
         while True:
-            update_data(azimuth_chart, elevation_chart, plot_chart, breathing_value, heartbeat_value)
+            if num < 24:
+                num = num + 1
+            elif num == 24:
+                num = 1
+            update_data(azimuth_chart, elevation_chart, plot_chart, breathing_value, heartbeat_value, posture_result, num)
             st.empty()
 
             if stop_button:
                 break
+
+
 if __name__ == "__main__":
     main()
